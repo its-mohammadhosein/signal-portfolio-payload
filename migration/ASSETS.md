@@ -1,11 +1,11 @@
 # Signal — Media Asset Manifest
 
-Source: `signal-portfolio/signal/wp-content/uploads/sites/45/`. One row per unique
+Source: `signal-portfolio/wp-content/uploads/sites/45/`. One row per unique
 **original** file actually referenced by the four real pages (home, work archive,
 Crystal Vibes, Radiant) — WordPress's auto-generated resized duplicates (`-1024x757`,
 `-768x568`, `-300x222`, `-150x150`, etc.) are not listed individually unless the
 original/unscaled file was never crawled, in which case the largest available size is
-listed and flagged. Paths are relative to `signal-portfolio/signal/`.
+listed and flagged. Paths are relative to `signal-portfolio/`.
 
 | Path | Used on | Placement / context | Notes |
 |---|---|---|---|
@@ -42,7 +42,7 @@ listed and flagged. Paths are relative to `signal-portfolio/signal/`.
 The six Services-section decorative images are referenced via `data-nectar-img-src`
 pointing at `https://themenectar.com/salient/signal/wp-content/uploads/...` — the live
 theme-demo site, not a path inside this crawl. They were **not downloaded** and are not
-present anywhere under `signal-portfolio/signal/wp-content/uploads/`. A future migration
+present anywhere under `signal-portfolio/wp-content/uploads/`. A future migration
 will need to either fetch these from the live URL (if still reachable) or source
 replacements:
 

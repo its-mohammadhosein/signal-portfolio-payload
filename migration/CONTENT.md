@@ -1,6 +1,6 @@
 # Signal — Content Inventory
 
-Source: `signal-portfolio/signal/` — a static HTML crawl of a WordPress site built on the
+Source: `signal-portfolio/` — a static HTML crawl of a WordPress site built on the
 Salient theme's "Signal" demo (agency/portfolio one-pager + a small work section). This
 document is a literal, page-by-page content inventory for migrating that content into
 `signal-portfolio-payload` (Payload CMS + Next.js). See `ASSETS.md` for the media manifest

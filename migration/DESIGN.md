@@ -1,10 +1,10 @@
 # Signal — Design System Extraction
 
 Source: Salient theme's compiled "dynamic styles" CSS for this site —
-`signal-portfolio/signal/wp-content/uploads/sites/45/salient/salient-dynamic-styles-multi-id-45__ver=84137.css`
+`signal-portfolio/wp-content/uploads/sites/45/salient/salient-dynamic-styles-multi-id-45__ver=84137.css`
 (the per-site design-token output of Salient's visual theme options) plus the self-hosted
 `@font-face` declarations in
-`signal-portfolio/signal/wp-content/uploads/sites/45/salient/edd2c6be5a4e1c63a7d0e496b13c4bab/fonts__ver=7.1.3.css`.
+`signal-portfolio/wp-content/uploads/sites/45/salient/edd2c6be5a4e1c63a7d0e496b13c4bab/fonts__ver=7.1.3.css`.
 
 This is a token/pattern extraction for recreating the **look and feel**, not a literal
 CSS port. See `CONTENT.md` for copy and `ASSETS.md` for media. Values below are quoted
