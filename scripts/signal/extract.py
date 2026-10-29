@@ -7,9 +7,10 @@ For every page below it writes:
   src/styles/signal/<page>.ts       imports of that page's stylesheets and inline <style>s, in document order
   src/styles/signal/files/*.css     the stylesheets themselves (shared between pages)
   public/signal/wp/**               the fonts, icons, images and scripts they reference
-  src/site/generated/<page>.ts      the original <body> markup with {{tokens}} where Payload content goes,
-                                    item templates for repeated parts, the original content as defaults,
-                                    and the original <body> class
+  src/site/data/<page>.ts           the original content (the defaults Payload content overrides),
+                                    the <body> class and attributes, and the page's scripts
+
+The markup itself was converted once into React components (src/site/components) by to_react.py.
 
 Re-run it after changing it; it overwrites its outputs.
 """
@@ -26,7 +27,7 @@ APP = os.path.normpath(os.path.join(HERE, '..', '..'))
 SRC = os.path.normpath(os.path.join(APP, '..', 'signal-portfolio'))
 STYLES = os.path.join(APP, 'src', 'styles', 'signal')
 PUBLIC = os.path.join(APP, 'public', 'signal', 'wp')
-GENERATED = os.path.join(APP, 'src', 'site', 'generated')
+DATA = os.path.join(APP, 'src', 'site', 'data')
 LIVE = 'https://themenectar.com/salient/signal/'
 
 copied = set()
@@ -79,8 +80,6 @@ css_files = {}  # crawl path -> file name in styles/files (shared by pages)
 def build_styles(page, doc, page_dir):
     os.makedirs(os.path.join(STYLES, 'files'), exist_ok=True)
     url_re = re.compile(r'url\(\s*([\'"]?)([^)\'"]+)\1\s*\)')
-    head = doc[: doc.index('<body')]
-    body = doc[doc.index('<body'):]
 
     def rewrite(css, base_rel_dir):
         def fix(m):
@@ -94,9 +93,11 @@ def build_styles(page, doc, page_dir):
 
         return url_re.sub(fix, css)
 
-    # <head> links and inline styles in order, then the stylesheets Salient loads late from <body>
-    entries = [m for m in re.finditer(r'<link([^>]*)>|<style([^>]*)>([\s\S]*?)</style>', head)]
-    entries += [m for m in re.finditer(r'<link([^>]*)>', body) if 'stylesheet' in m.group(1)]
+    # Every stylesheet and inline <style> of the page, <head> and <body>, in document order
+    entries = [
+        m for m in re.finditer(r'<link([^>]*)>|<style([^>]*)>([\s\S]*?)</style>', doc)
+        if not m.group(0).startswith('<link') or 'stylesheet' in m.group(1)
+    ]
     imports = []
 
     for m in entries:
@@ -232,6 +233,7 @@ def prepare_body(doc):
     body = re.sub(r'<script[^>]*id=["\']fluent-form-submission-js-extra["\'][^>]*>[\s\S]*?</script>', '', body)
     body = re.sub(r'<script[^>]*id=["\']fluent-form-submission-js["\'][^>]*></script>', '', body)
     body = re.sub(r'<link[^>]*stylesheet[^>]*>', '', body)  # moved into the style bundle
+    body = re.sub(r'<style[^>]*>[\s\S]*?</style>', '', body)  # likewise
     return rewrite_urls(body)
 
 
@@ -487,36 +489,62 @@ PAGES = [
 ]
 
 
-def build(page, rel, fn):
+def parse_scripts(html):
+    """<script> tags as data for the LegacyScripts component: src or inline code, plus attributes"""
+    out = []
+    for m in re.finditer(r'<script([^>]*)>([\s\S]*?)</script>', html):
+        attrs = dict(re.findall(r"""([\w-]+)(?:=["']([^"']*)["'])?""", m.group(1)))
+        entry = {k: v for k, v in attrs.items() if k in ('src', 'type', 'id')}
+        extra = {k: v for k, v in attrs.items() if k not in ('src', 'type', 'id')}
+        if extra:
+            entry['attributes'] = extra
+        if m.group(2).strip():
+            entry['code'] = m.group(2).strip()
+        if entry.get('src') or entry.get('code'):
+            out.append(entry)
+    return out
+
+
+def extract_page(page, rel, fn):
+    """The tokenized markup, item templates and original content of one page"""
     doc = open(os.path.join(SRC, rel), encoding='utf-8').read()
-    page_dir = os.path.dirname(rel)
-    styles = build_styles(page, doc, page_dir)
     body_tag = re.search(r'<body([^>]*)>', doc).group(1)
-    body_class = re.search(r'class="([^"]*)"', body_tag).group(1)
-    body_attributes = {k: v for k, v in re.findall(r'([\w-]+)="([^"]*)"', body_tag) if k != 'class'}
     T, D = {}, {}
-    body = chrome(prepare_body(doc), T, D)
-    body = fn(body, T, D)
+    body = fn(chrome(prepare_body(doc), T, D), T, D)
 
-    js = re.search(r'<script[^>]*src="/signal/wp/includes/js/jquery/jquery\.min', body).start()
-    markup, scripts = body[:js], body[js:] + '\n<script src="/signal/site.js"></script>\n'
+    # Every script, in document order, leaves the markup for the LegacyScripts component
+    script_re = re.compile(r'<script[^>]*>[\s\S]*?</script>')
+    scripts = parse_scripts(''.join(script_re.findall(body))) + [{'src': '/signal/site.js'}]
+    markup = script_re.sub('', body)
+    return {
+        'bodyAttributes': {k: v for k, v in re.findall(r'([\w-]+)="([^"]*)"', body_tag) if k != 'class'},
+        'bodyClass': re.search(r'class="([^"]*)"', body_tag).group(1),
+        'defaults': D,
+        'markup': markup,
+        'scripts': scripts,
+        'templates': T,
+        'doc': doc,
+    }
 
-    with open(os.path.join(GENERATED, f'{page}.ts'), 'w', encoding='utf-8', newline='\n') as f:
-        f.write(f'/* eslint-disable */\n// Generated by scripts/signal/extract.py from signal-portfolio/{rel}. Do not edit by hand.\n\n')
-        f.write('export const bodyClass = ' + json.dumps(body_class) + '\n\n')
-        f.write('export const bodyAttributes: Record<string, string> = ' + json.dumps(body_attributes, indent=2) + '\n\n')
-        f.write('export const markup = ' + json.dumps(markup, ensure_ascii=False) + '\n\n')
-        f.write('export const scripts = ' + json.dumps(scripts, ensure_ascii=False) + '\n\n')
-        f.write('export const templates = ' + json.dumps(T, ensure_ascii=False, indent=2) + ' as const\n\n')
-        f.write('export const defaults = ' + json.dumps(D, ensure_ascii=False, indent=2) + '\n')
-    left = sorted(set(re.findall(r'\{\{(\w+)\}\}', markup)))
-    print(f'{page}: {styles} styles, tokens {left}')
+
+def build(page, rel, fn):
+    page_data = extract_page(page, rel, fn)
+    styles = build_styles(page, page_data['doc'], os.path.dirname(rel))
+    with open(os.path.join(DATA, f'{page}.ts'), 'w', encoding='utf-8', newline='\n') as f:
+        f.write(f'// Generated by scripts/signal/extract.py from signal-portfolio/{rel}: the original content,\n')
+        f.write('// <body> attributes and scripts of the page. Re-run `pnpm signal:extract` instead of editing.\n')
+        f.write("import type { LegacyScript } from '../components/LegacyScripts'\n\n")
+        f.write('export const bodyClass = ' + json.dumps(page_data['bodyClass']) + '\n\n')
+        f.write('export const bodyAttributes: Record<string, string> = ' + json.dumps(page_data['bodyAttributes'], indent=2) + '\n\n')
+        f.write('export const scripts: LegacyScript[] = ' + json.dumps(page_data['scripts'], ensure_ascii=False, indent=2) + '\n\n')
+        f.write('export const content = ' + json.dumps(page_data['defaults'], ensure_ascii=False, indent=2) + '\n')
+    print(f'{page}: {styles} styles, {len(page_data["scripts"])} scripts')
 
 
 if __name__ == '__main__':
     shutil.rmtree(STYLES, ignore_errors=True)
-    shutil.rmtree(GENERATED, ignore_errors=True)
-    os.makedirs(GENERATED)
+    shutil.rmtree(DATA, ignore_errors=True)
+    os.makedirs(DATA)
     for page, rel, fn in PAGES:
         build(page, rel, fn)
     print('assets copied:', len(copied))

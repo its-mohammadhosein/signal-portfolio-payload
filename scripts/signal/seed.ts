@@ -3,7 +3,7 @@
  *
  *   pnpm payload run scripts/signal/seed.ts
  *
- * Content and images come from the extracted pages (src/site/generated, public/signal/wp).
+ * Content and images come from the extracted pages (src/site/data, public/signal/wp).
  * Re-runnable: documents are matched by slug, title or file name and updated, nothing else is
  * deleted. Refuses to run in production unless ALLOW_SEED=true.
  */
@@ -11,10 +11,10 @@ import config from '@payload-config'
 import path from 'path'
 import { getPayload, type Payload } from 'payload'
 
-import * as home from '@/site/generated/home'
-import * as crystalVibes from '@/site/generated/portfolio-crystal-vibes'
-import * as radiant from '@/site/generated/portfolio-radiant'
-import * as work from '@/site/generated/work'
+import { content as home } from '@/site/data/home'
+import { content as crystalVibes } from '@/site/data/portfolio-crystal-vibes'
+import { content as radiant } from '@/site/data/portfolio-radiant'
+import { content as work } from '@/site/data/work'
 
 if (process.env.NODE_ENV === 'production' && process.env.ALLOW_SEED !== 'true') {
   throw new Error('Refusing to seed in production. Set ALLOW_SEED=true to override.')
@@ -96,7 +96,7 @@ const seed = async () => {
 
   // -- categories, in the original filter order
   const categoryIds: Record<string, number> = {}
-  for (const { slug, title } of work.defaults.categories) {
+  for (const { slug, title } of work.categories) {
     const doc = await upsert(payload, 'categories', { slug: { equals: slug } }, { slug, title })
     categoryIds[slug] = doc.id as number
   }
@@ -125,9 +125,9 @@ const seed = async () => {
   )
 
   // -- projects: card data from the work page, case-study content from the two crawled pages
-  const caseStudies = { 'crystal-vibes': crystalVibes.defaults, radiant: radiant.defaults } as const
+  const caseStudies = { 'crystal-vibes': crystalVibes, radiant: radiant } as const
   const projectIds: Record<string, number> = {}
-  for (const item of work.defaults.work) {
+  for (const item of work.work) {
     const slug = slugOf(item.href)
     const study = caseStudies[slug as keyof typeof caseStudies]
     const thumbnail = await media(payload, item.image, item.title)
@@ -170,7 +170,7 @@ const seed = async () => {
   }
 
   // -- home page
-  const D = home.defaults
+  const D = home
   const services = []
   for (const service of D.services) {
     services.push({

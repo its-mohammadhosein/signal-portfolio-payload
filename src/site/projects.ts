@@ -4,8 +4,8 @@ import { getPayload } from 'payload'
 import type { Category as CategoryDoc, Project } from '@/payload-types'
 
 import { toImage } from './chrome'
-import { defaults as workDefaults } from './generated/work'
-import { formatDate, type Category, type WorkItem } from './render'
+import { content as workDefaults } from './data/work'
+import { formatDate, type Category, type WorkItem } from './types'
 
 export const originalCategories: Category[] = workDefaults.categories
 

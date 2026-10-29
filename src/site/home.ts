@@ -3,20 +3,9 @@ import { getPayload } from 'payload'
 
 import type { Page } from '@/payload-types'
 
-import { chromeValues, loadChrome, resolveLink, toImage } from './chrome'
-import { defaults, markup, scripts, templates as T } from './generated/home'
-import { loadWorkItems, originalCategories } from './projects'
-import {
-  atPosition,
-  escape,
-  fill,
-  gridFilters,
-  gridItems,
-  imageValues,
-  type SiteImage,
-  type SiteLink,
-  type WorkItem,
-} from './render'
+import { resolveLink, toImage } from './chrome'
+import { content as defaults } from './data/home'
+import type { SiteImage, SiteLink } from './types'
 
 /** The home page's own content (the header and footer come from the globals) */
 export type HomeContent = {
@@ -132,80 +121,4 @@ export const loadHomeContent = async (): Promise<HomeContent> => {
   }
 
   return content
-}
-
-export const renderHome = (
-  content: HomeContent,
-  chrome: Parameters<typeof chromeValues>[0],
-  work: WorkItem[],
-) => {
-  // Text between the inline images, with the original spacing: "In a <img> world full of ..."
-  const { images: inline, segments } = content.noise
-  const noise = segments
-    .map(
-      (segment, i) =>
-        escape(segment) +
-        (inline[i] && i < segments.length - 1
-          ? ' ' + fill(T.inlineImage, imageValues(inline[i])) + ' '
-          : ''),
-    )
-    .join('')
-
-  const html = fill(markup, {
-    ...chromeValues(chrome, T, '/'),
-    heroLines: content.heroLines.map((text) => fill(T.heroLine, { text: escape(text) })).join(''),
-    heroMeta1: escape(content.heroMeta[0]),
-    heroMeta2: escape(content.heroMeta[1]),
-    heroMeta3: escape(content.heroMeta[2]),
-    heroTrail: content.heroTrail
-      .map((img, i) => fill(atPosition(T.trailImage, i), imageValues(img)))
-      .join(''),
-    introCtaHref: escape(content.intro.cta.href),
-    introCtaLabel: escape(content.intro.cta.label),
-    introText: escape(content.intro.text),
-    noiseContent: noise,
-    // Each card keeps the original card's markup at the same position (the colour layers differ)
-    serviceCards: content.services
-      .map((service, i) =>
-        fill(T.serviceCards[i % T.serviceCards.length], {
-          badges: service.bullets
-            .map((text, j) =>
-              fill(atPosition(T.badges[i % T.badges.length], j), { text: escape(text) }),
-            )
-            .join(''),
-          image: escape(service.image),
-          title: escape(service.title),
-        }),
-      )
-      .join(''),
-    testimonials: content.testimonials
-      .map((item) =>
-        fill(T.testimonial, {
-          icon: escape(item.icon),
-          name: escape(item.name),
-          quote: escape(item.quote),
-          role: escape(item.role),
-        }),
-      )
-      .join(''),
-    videoBg: content.video.src ? fill(T.videoBg, { src: escape(content.video.src) }) : '',
-    videoCta: content.video.href
-      ? fill(T.videoCta, { href: escape(content.video.href), label: escape(content.video.label) })
-      : '',
-    workFilters: gridFilters(T, work, originalCategories),
-    workHeading: escape(content.workHeading),
-    workItems: gridItems(T.workItem, undefined, work),
-  })
-
-  return { html, scripts }
-}
-
-/** The original shows the six most recent projects */
-export const homePage = async () => {
-  const [content, chrome, work] = await Promise.all([
-    loadHomeContent(),
-    loadChrome(),
-    loadWorkItems(6),
-  ])
-  return renderHome(content, chrome, work)
 }

@@ -4,8 +4,8 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 
 import type { Footer, Header, Media } from '@/payload-types'
 
-import { defaults } from './generated/home'
-import { escape, fill, type SiteImage, type SiteLink } from './render'
+import { content as defaults } from './data/home'
+import type { SiteImage, SiteLink } from './types'
 
 /** Header, off-canvas menu, contact form and footer: from the header and footer globals */
 export type SiteChrome = {
@@ -96,34 +96,3 @@ export const loadChrome = async (): Promise<SiteChrome> => {
   ])
   return chromeFromGlobals(header, footer)
 }
-
-const isCurrent = (href: string, path: string) =>
-  path === '/' ? href === '/' || href.startsWith('/#') : href === path
-
-/** Token values for the parts shared by every page */
-export const chromeValues = (
-  chrome: SiteChrome,
-  templates: { menuItem: string; social: string },
-  path: string,
-): Record<string, string> => ({
-  contactFormId: escape(chrome.contactFormId),
-  ctaHref: escape(chrome.cta.href),
-  ctaLabel: escape(chrome.cta.label),
-  email: escape(chrome.email),
-  emailHref: escape(chrome.email ? `mailto:${chrome.email}` : '#'),
-  logoText: escape(chrome.logoText),
-  menuItems: chrome.menu
-    .map(({ href, label }) =>
-      fill(templates.menuItem, {
-        ariaCurrent: isCurrent(href, path) ? ' aria-current="page"' : '',
-        current: isCurrent(href, path) ? ' current-menu-item' : '',
-        href: escape(href),
-        label: escape(label),
-      }),
-    )
-    .join('\n'),
-  socials: chrome.socials
-    .map(({ href, label }) => fill(templates.social, { href: escape(href), label: escape(label) }))
-    .join(''),
-  wordmark: escape(chrome.wordmark),
-})

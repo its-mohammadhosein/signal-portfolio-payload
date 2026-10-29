@@ -1,8 +1,7 @@
 import React from 'react'
 
-import { homePage } from '@/site/home'
-import { SignalMarkup } from '@/site/SignalDocument'
+import { HomePage } from '@/site/pages/HomePage'
 
-export default async function HomePage() {
-  return <SignalMarkup {...await homePage()} />
+export default function Page() {
+  return <HomePage />
 }
