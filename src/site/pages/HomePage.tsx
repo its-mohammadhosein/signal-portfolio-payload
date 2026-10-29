@@ -19,7 +19,6 @@ import { VideoBackground } from '../components/home/VideoBackground'
 import { PostGridFilters } from '../components/PostGridFilters'
 import { SalientImage } from '../components/SalientImage'
 import { SiteShell } from '../components/SiteShell'
-import { scripts } from '../data/home'
 import { loadHomeContent, type HomeContent } from '../home'
 import { loadWorkItems, originalCategories } from '../projects'
 import type { WorkItem } from '../types'
@@ -50,7 +49,7 @@ export function HomeView({
   const { images, segments } = content.noise
 
   return (
-    <SiteShell chrome={chrome} path="/" scripts={scripts}>
+    <SiteShell chrome={chrome} path="/">
       <HomeMain>
         <HeroSection
           heroLines={content.heroLines.map((text, i) => (

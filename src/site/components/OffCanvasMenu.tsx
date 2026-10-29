@@ -1,6 +1,9 @@
 import React from 'react'
 
-/** The menu that slides in from the right */
+/**
+ * The menu that slides in from the right. Like the theme's material menu, it sits after
+ * .ocm-effect-wrap, and its close button lives in its own wrapper (see SiteShell).
+ */
 export function OffCanvasMenu({ menuItems }: { menuItems: React.ReactNode }) {
   return (
     <>
@@ -17,14 +20,6 @@ export function OffCanvasMenu({ menuItems }: { menuItems: React.ReactNode }) {
         <div className="inner-wrap">
           <div className="inner" data-prepend-menu-mobile="true">
             {' '}
-            <a className="slide_out_area_close" href="#">
-              <span className="screen-reader-text">Close Menu</span>{' '}
-              <span className="close-wrap">
-                {' '}
-                <span className="close-line close-line1" role="presentation" />{' '}
-                <span className="close-line close-line2" role="presentation" />{' '}
-              </span>{' '}
-            </a>{' '}
             <div className="off-canvas-menu-container mobile-only" role="navigation">
               <ul className="menu" />
               <ul className="menu secondary-header-items" />

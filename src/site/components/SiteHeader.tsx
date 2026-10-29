@@ -138,6 +138,11 @@ export function SiteHeader({
                         {' '}
                         <i className="lines" />{' '}
                       </i>{' '}
+                      {/* hover-effect copy the theme adds to the icon */}
+                      <i className="lines-button x2 hover-effect" data-variant="even_lines">
+                        {' '}
+                        <i className="lines" />{' '}
+                      </i>
                     </span>{' '}
                   </a>
                 </div>
@@ -179,6 +184,11 @@ export function SiteHeader({
                             {' '}
                             <i className="lines" />{' '}
                           </i>{' '}
+                          {/* hover-effect copy the theme adds to the icon */}
+                          <i className="lines-button x2 hover-effect" data-variant="even_lines">
+                            {' '}
+                            <i className="lines" />{' '}
+                          </i>
                         </span>{' '}
                       </a>{' '}
                     </div>

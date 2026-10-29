@@ -14,7 +14,6 @@ import { RadiantMain } from '../components/portfolio/RadiantMain'
 import { PostGridFilters } from '../components/PostGridFilters'
 import { SalientImage } from '../components/SalientImage'
 import { SiteShell } from '../components/SiteShell'
-import { scripts } from '../data/portfolio-radiant'
 import { layoutFor, type ProjectContent } from '../portfolio'
 import { loadWorkItems, originalCategories } from '../projects'
 
@@ -105,7 +104,7 @@ export function ProjectView({
   const { Main } = layout
 
   return (
-    <SiteShell chrome={chrome} path={`/portfolio/${slug}`} scripts={scripts}>
+    <SiteShell chrome={chrome} path={`/portfolio/${slug}`}>
       <Main
         body={content.body.join(' ')}
         expertises={content.expertises.map((text) => (

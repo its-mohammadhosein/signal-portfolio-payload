@@ -6,7 +6,6 @@ import { SalientImage } from '../components/SalientImage'
 import { SiteShell } from '../components/SiteShell'
 import { WorkGridItem } from '../components/work/WorkGridItem'
 import { WorkMain } from '../components/work/WorkMain'
-import { scripts } from '../data/work'
 import { loadWorkItems, originalCategories } from '../projects'
 import type { WorkItem } from '../types'
 
@@ -21,7 +20,7 @@ export async function WorkPage() {
 /** The work page for the given projects (newest first) */
 export function WorkView({ chrome, work }: { chrome: SiteChrome; work: WorkItem[] }) {
   return (
-    <SiteShell chrome={chrome} path="/work" scripts={scripts}>
+    <SiteShell chrome={chrome} path="/work">
       <WorkMain
         workFilters={<PostGridFilters order={originalCategories} projects={work} />}
         workItems={work.map((project, i) => (
