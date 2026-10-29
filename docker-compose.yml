@@ -1,22 +1,22 @@
 version: '3'
 
 services:
-  payload:
-    image: node:22.23.4-alpine
-    ports:
-      - '3000:3000'
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn dev"
-    depends_on:
-      - postgres
-    env_file:
-      - .env
-    environment:
-      # Inside the compose network Postgres is reachable on its container port (5432)
-      DATABASE_URL: postgresql://signal:signal@postgres:5432/signal_portfolio
+#   payload:
+#     image: node:22.23.4-alpine
+#     ports:
+#       - '3000:3000'
+#     volumes:
+#       - .:/home/node/app
+#       - node_modules:/home/node/app/node_modules
+#     working_dir: /home/node/app/
+#     command: sh -c "yarn install && yarn dev"
+#     depends_on:
+#       - postgres
+#     env_file:
+#       - .env
+#     environment:
+#       # Inside the compose network Postgres is reachable on its container port (5432)
+#       DATABASE_URL: postgresql://signal:signal@postgres:5432/signal_portfolio
 
   postgres:
     image: postgres:17
