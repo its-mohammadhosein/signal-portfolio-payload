@@ -1,0 +1,9 @@
+
+body {
+			--fluentform-danger: #f32e2e;
+			--fluentform-primary: var(--nectar-accent-color);
+		}
+		body[data-fancy-form-rcs="1"] .fluentform span.select2.select2-container:after {
+	        display: none;
+	    }
+/*# sourceURL=fluent-form-styles-inline-css */
