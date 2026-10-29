@@ -20,6 +20,13 @@ type CMSLinkType = {
   url?: string | null
 }
 
+/* Label is duplicated through data-label so the hover text-slide is pure CSS (see globals.css) */
+const PillLabel: React.FC<{ label: string }> = ({ label }) => (
+  <span className="pill-label" data-label={label}>
+    <span className="pill-label__text">{label}</span>
+  </span>
+)
+
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
   const {
     type,
@@ -55,10 +62,12 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     )
   }
 
+  const isPill = appearance === 'pill' || appearance === 'pillOutline'
+
   return (
     <Button asChild className={className} size={size} variant={appearance}>
       <Link className={cn(className)} href={href || url || ''} {...newTabProps}>
-        {label && label}
+        {label && (isPill ? <PillLabel label={label} /> : label)}
         {children && children}
       </Link>
     </Button>

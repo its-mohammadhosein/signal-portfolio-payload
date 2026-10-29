@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { blockSettings } from '@/fields/blockSettings'
+
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -86,6 +88,7 @@ export const Archive: Block = {
       label: 'Selection',
       relationTo: ['posts'],
     },
+    blockSettings(),
   ],
   labels: {
     plural: 'Archives',

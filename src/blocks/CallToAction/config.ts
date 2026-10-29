@@ -1,5 +1,7 @@
 import type { Block } from 'payload'
 
+import { blockSettings } from '@/fields/blockSettings'
+
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -34,6 +36,7 @@ export const CallToAction: Block = {
         maxRows: 2,
       },
     }),
+    blockSettings(),
   ],
   labels: {
     plural: 'Calls to Action',

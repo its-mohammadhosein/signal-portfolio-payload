@@ -484,6 +484,11 @@ export interface CallToActionBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'cta';
@@ -534,6 +539,11 @@ export interface ContentBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
@@ -544,6 +554,11 @@ export interface ContentBlock {
  */
 export interface MediaBlock {
   media: number | Media;
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
@@ -578,6 +593,11 @@ export interface ArchiveBlock {
         value: number | Post;
       }[]
     | null;
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'archive';
@@ -604,6 +624,11 @@ export interface FormBlock {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'formBlock';
@@ -1117,6 +1142,8 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  anchorId?: T;
+  theme?: T;
   id?: T;
   blockName?: T;
 }
@@ -1143,6 +1170,8 @@ export interface ContentBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  anchorId?: T;
+  theme?: T;
   id?: T;
   blockName?: T;
 }
@@ -1152,6 +1181,8 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
+  anchorId?: T;
+  theme?: T;
   id?: T;
   blockName?: T;
 }
@@ -1166,6 +1197,8 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   categories?: T;
   limit?: T;
   selectedDocs?: T;
+  anchorId?: T;
+  theme?: T;
   id?: T;
   blockName?: T;
 }
@@ -1177,6 +1210,8 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  anchorId?: T;
+  theme?: T;
   id?: T;
   blockName?: T;
 }

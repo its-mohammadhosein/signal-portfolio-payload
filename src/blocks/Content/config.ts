@@ -1,5 +1,6 @@
 import type { Block, Field } from 'payload'
 
+import { blockSettings } from '@/fields/blockSettings'
 import {
   FixedToolbarFeature,
   HeadingFeature,
@@ -75,5 +76,6 @@ export const Content: Block = {
       },
       fields: columnFields,
     },
+    blockSettings(),
   ],
 }
