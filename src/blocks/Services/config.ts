@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { blockSettings } from '@/fields/blockSettings'
+import { linkGroup } from '@/fields/linkGroup'
 
 export const Services: Block = {
   slug: 'services',
@@ -10,6 +11,12 @@ export const Services: Block = {
       name: 'heading',
       type: 'text',
     },
+    linkGroup({
+      appearances: false,
+      overrides: {
+        maxRows: 1,
+      },
+    }),
     {
       name: 'items',
       type: 'array',

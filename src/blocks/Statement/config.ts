@@ -11,6 +11,10 @@ export const Statement: Block = {
       name: 'text',
       type: 'textarea',
       required: true,
+      admin: {
+        description:
+          'Write [image] where an inline image goes; the images below are used in order.',
+      },
     },
     linkGroup({
       appearances: ['pill', 'pillOutline'],

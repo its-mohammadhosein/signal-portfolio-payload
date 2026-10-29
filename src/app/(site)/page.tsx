@@ -1,14 +1,20 @@
-// Placeholder while the sections are ported (see migration-plan.md): confirms the legacy styles load
-export default function HomePage() {
+import React from 'react'
+
+import { loadHomeContent } from '@/site/loadHomeContent'
+import { renderHome } from '@/site/renderHome'
+
+/*
+ * The home page is the original Signal markup (src/site/generated/home.ts) with Payload content
+ * filled in. The original Salient scripts are part of the server HTML, so the browser runs them on
+ * load exactly as on the old site. Links are plain <a> tags, so every page is a full load.
+ */
+export default async function HomePage() {
+  const { html, scripts } = renderHome(await loadHomeContent(), '/')
+
   return (
-    <div id="ajax-content-wrap">
-      <div className="container-wrap">
-        <div className="container main-content">
-          <div className="row">
-            <h1>Legacy Signal styles loaded</h1>
-          </div>
-        </div>
-      </div>
-    </div>
+    <>
+      <div dangerouslySetInnerHTML={{ __html: html }} style={{ display: 'contents' }} />
+      <div dangerouslySetInnerHTML={{ __html: scripts }} style={{ display: 'contents' }} />
+    </>
   )
 }

@@ -913,6 +913,9 @@ export interface Form {
  * via the `definition` "StatementBlock".
  */
 export interface StatementBlock {
+  /**
+   * Write [image] where an inline image goes; the images below are used in order.
+   */
   text: string;
   links?:
     | {
@@ -963,6 +966,30 @@ export interface StatementBlock {
  */
 export interface ServicesBlock {
   heading?: string | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'projects';
+                value: number | Project;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
   items: {
     title: string;
     bullets?:
@@ -1529,6 +1556,20 @@ export interface StatementBlockSelect<T extends boolean = true> {
  */
 export interface ServicesBlockSelect<T extends boolean = true> {
   heading?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
   items?:
     | T
     | {
