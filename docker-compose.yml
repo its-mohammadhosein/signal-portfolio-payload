@@ -36,18 +36,18 @@ services:
       timeout: 5s
       retries: 5
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
-    volumes:
-      - data:/data/db
-    logging:
-      driver: none
+  # mongo:
+  #   image: mongo:latest
+  #   ports:
+  #     - '27017:27017'
+  #   command:
+  #     - --storageEngine=wiredTiger
+  #   volumes:
+  #     - data:/data/db
+  #   logging:
+  #     driver: none
 
 volumes:
   postgres_data:
-  data:
-  node_modules:
+  # data:
+  # node_modules:
