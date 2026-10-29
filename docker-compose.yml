@@ -11,9 +11,30 @@ services:
     working_dir: /home/node/app/
     command: sh -c "yarn install && yarn dev"
     depends_on:
-      - mongo
+      - postgres
     env_file:
       - .env
+    environment:
+      # Inside the compose network Postgres is reachable on its container port (5432)
+      DATABASE_URL: postgresql://signal:signal@postgres:5432/signal_portfolio
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    ports:
+      # 5432 and 5433 are already taken on this machine, so the host port is 5434
+      - '5434:5432'
+    environment:
+      POSTGRES_USER: signal
+      POSTGRES_PASSWORD: signal
+      POSTGRES_DB: signal_portfolio
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U signal -d signal_portfolio']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   mongo:
     image: mongo:latest
@@ -27,5 +48,6 @@ services:
       driver: none
 
 volumes:
+  postgres_data:
   data:
   node_modules:
