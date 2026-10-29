@@ -35,6 +35,10 @@ export const hero: Field = {
           label: 'Low Impact',
           value: 'lowImpact',
         },
+        {
+          label: 'Signal',
+          value: 'signal',
+        },
       ],
       required: true,
     },
@@ -51,7 +55,43 @@ export const hero: Field = {
           ]
         },
       }),
+      admin: {
+        condition: (_, { type } = {}) => type !== 'signal',
+      },
       label: false,
+    },
+    {
+      name: 'headline',
+      type: 'textarea',
+      admin: {
+        condition: (_, { type } = {}) => type === 'signal',
+        description: 'One line per row, e.g. "WE CREATE" then "THE HYPE".',
+      },
+    },
+    {
+      name: 'metaLabels',
+      type: 'array',
+      admin: {
+        condition: (_, { type } = {}) => type === 'signal',
+        initCollapsed: true,
+      },
+      fields: [
+        {
+          name: 'text',
+          type: 'text',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'trailImages',
+      type: 'upload',
+      hasMany: true,
+      relationTo: 'media',
+      admin: {
+        condition: (_, { type } = {}) => type === 'signal',
+        description: 'Photos that follow the cursor across the hero.',
+      },
     },
     linkGroup({
       overrides: {

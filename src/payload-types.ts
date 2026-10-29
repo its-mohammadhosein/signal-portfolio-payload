@@ -161,7 +161,7 @@ export interface Page {
   id: number;
   title: string;
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'signal';
     richText?: {
       root: {
         type: string;
@@ -177,6 +177,20 @@ export interface Page {
       };
       [k: string]: unknown;
     } | null;
+    /**
+     * One line per row, e.g. "WE CREATE" then "THE HYPE".
+     */
+    headline?: string | null;
+    metaLabels?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Photos that follow the cursor across the hero.
+     */
+    trailImages?: (number | Media)[] | null;
     links?:
       | {
           link: {
@@ -207,7 +221,18 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+    | StatementBlock
+    | ServicesBlock
+    | ProjectsGridBlock
+    | VideoBandBlock
+    | TestimonialsBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -217,56 +242,6 @@ export interface Page {
     description?: string | null;
   };
   publishedAt?: string | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
- */
-export interface Post {
-  id: number;
-  title: string;
-  heroImage?: (number | null) | Media;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  relatedPosts?: (number | Post)[] | null;
-  categories?: (number | Category)[] | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-    description?: string | null;
-  };
-  publishedAt?: string | null;
-  authors?: (number | User)[] | null;
-  populatedAuthors?:
-    | {
-        id?: string | null;
-        name?: string | null;
-      }[]
-    | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -394,6 +369,56 @@ export interface FolderInterface {
   folderType?: 'media'[] | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  heroImage?: (number | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  relatedPosts?: (number | Post)[] | null;
+  categories?: (number | Category)[] | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  publishedAt?: string | null;
+  authors?: (number | User)[] | null;
+  populatedAuthors?:
+    | {
+        id?: string | null;
+        name?: string | null;
+      }[]
+    | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -885,6 +910,154 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatementBlock".
+ */
+export interface StatementBlock {
+  text: string;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'projects';
+                value: number | Project;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('pill' | 'pillOutline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  align?: ('left' | 'center') | null;
+  revealOnScroll?: boolean | null;
+  /**
+   * Decorative images that follow the cursor over the statement.
+   */
+  trailImages?: (number | Media)[] | null;
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'statement';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServicesBlock".
+ */
+export interface ServicesBlock {
+  heading?: string | null;
+  items: {
+    title: string;
+    bullets?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Decorative image revealed when the service is hovered.
+     */
+    image?: (number | null) | Media;
+    id?: string | null;
+  }[];
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'services';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsGridBlock".
+ */
+export interface ProjectsGridBlock {
+  heading?: string | null;
+  showFilters?: boolean | null;
+  populateBy?: ('all' | 'selection') | null;
+  limit?: number | null;
+  selectedProjects?: (number | Project)[] | null;
+  layout?: ('grid' | 'featured') | null;
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'projectsGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VideoBandBlock".
+ */
+export interface VideoBandBlock {
+  heading?: string | null;
+  /**
+   * Optional looping, muted background video (mp4).
+   */
+  backgroundVideo?: (number | null) | Media;
+  /**
+   * Optional image shown until the background video loads.
+   */
+  poster?: (number | null) | Media;
+  /**
+   * Optional YouTube link opened by the play button. The button is hidden without it.
+   */
+  externalVideoUrl?: string | null;
+  playLabel?: string | null;
+  height?: ('50' | '70' | '100') | null;
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'videoBand';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock".
+ */
+export interface TestimonialsBlock {
+  heading?: string | null;
+  items: {
+    quote: string;
+    name: string;
+    role?: string | null;
+    id?: string | null;
+  }[];
+  /**
+   * Used as the section id, so it can be linked to as /#your-id. Lowercase letters, numbers and dashes.
+   */
+  anchorId?: string | null;
+  theme?: ('paper' | 'paperAlt' | 'ink') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonials';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1174,6 +1347,14 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         type?: T;
         richText?: T;
+        headline?: T;
+        metaLabels?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        trailImages?: T;
         links?:
           | T
           | {
@@ -1199,6 +1380,11 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        statement?: T | StatementBlockSelect<T>;
+        services?: T | ServicesBlockSelect<T>;
+        projectsGrid?: T | ProjectsGridBlockSelect<T>;
+        videoBand?: T | VideoBandBlockSelect<T>;
+        testimonials?: T | TestimonialsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1303,6 +1489,110 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  anchorId?: T;
+  theme?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatementBlock_select".
+ */
+export interface StatementBlockSelect<T extends boolean = true> {
+  text?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  align?: T;
+  revealOnScroll?: T;
+  trailImages?: T;
+  anchorId?: T;
+  theme?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServicesBlock_select".
+ */
+export interface ServicesBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        bullets?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        image?: T;
+        id?: T;
+      };
+  anchorId?: T;
+  theme?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsGridBlock_select".
+ */
+export interface ProjectsGridBlockSelect<T extends boolean = true> {
+  heading?: T;
+  showFilters?: T;
+  populateBy?: T;
+  limit?: T;
+  selectedProjects?: T;
+  layout?: T;
+  anchorId?: T;
+  theme?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VideoBandBlock_select".
+ */
+export interface VideoBandBlockSelect<T extends boolean = true> {
+  heading?: T;
+  backgroundVideo?: T;
+  poster?: T;
+  externalVideoUrl?: T;
+  playLabel?: T;
+  height?: T;
+  anchorId?: T;
+  theme?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock_select".
+ */
+export interface TestimonialsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  items?:
+    | T
+    | {
+        quote?: T;
+        name?: T;
+        role?: T;
+        id?: T;
+      };
   anchorId?: T;
   theme?: T;
   id?: T;
