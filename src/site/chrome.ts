@@ -2,7 +2,7 @@ import { socialPlatforms } from '@/Footer/config'
 import { collectionPrefixMap } from '@/utilities/collectionPrefix'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 
-import type { Media } from '@/payload-types'
+import type { Footer, Header, Media } from '@/payload-types'
 
 import { defaults } from './generated/home'
 import { escape, fill, type SiteImage, type SiteLink } from './render'
@@ -61,12 +61,9 @@ const platformLabels: Record<string, string> = Object.fromEntries(
   socialPlatforms.map((p) => [p.value, p.label]),
 )
 
-export const loadChrome = async (): Promise<SiteChrome> => {
+/** Header and footer globals mapped onto the original chrome; unset fields keep the original */
+export const chromeFromGlobals = (header: Header, footer: Footer): SiteChrome => {
   const chrome: SiteChrome = structuredClone(defaultChrome)
-  const [header, footer] = await Promise.all([
-    getCachedGlobal('header', 1)(),
-    getCachedGlobal('footer', 1)(),
-  ])
 
   if (header.logoText) chrome.logoText = header.logoText
   const cta = resolveLink(header.cta)
@@ -90,6 +87,14 @@ export const loadChrome = async (): Promise<SiteChrome> => {
   }
 
   return chrome
+}
+
+export const loadChrome = async (): Promise<SiteChrome> => {
+  const [header, footer] = await Promise.all([
+    getCachedGlobal('header', 1)(),
+    getCachedGlobal('footer', 1)(),
+  ])
+  return chromeFromGlobals(header, footer)
 }
 
 const isCurrent = (href: string, path: string) =>
