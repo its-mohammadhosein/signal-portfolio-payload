@@ -19,7 +19,7 @@ services:
       DATABASE_URL: postgresql://signal:signal@postgres:5432/signal_portfolio
 
   postgres:
-    image: postgres:17-alpine
+    image: postgres:17
     restart: unless-stopped
     ports:
       # 5432 and 5433 are already taken on this machine, so the host port is 5434
