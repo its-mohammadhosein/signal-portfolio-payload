@@ -1,7 +1,16 @@
 import type { GlobalConfig } from 'payload'
 
-import { link } from '@/fields/link'
 import { revalidateFooter } from './hooks/revalidateFooter'
+
+export const socialPlatforms = [
+  { label: 'LinkedIn', value: 'linkedin' },
+  { label: 'Facebook', value: 'facebook' },
+  { label: 'Instagram', value: 'instagram' },
+  { label: 'X', value: 'x' },
+  { label: 'YouTube', value: 'youtube' },
+  { label: 'Dribbble', value: 'dribbble' },
+  { label: 'Behance', value: 'behance' },
+]
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
@@ -10,19 +19,61 @@ export const Footer: GlobalConfig = {
   },
   fields: [
     {
-      name: 'navItems',
-      type: 'array',
+      name: 'contact',
+      type: 'group',
+      admin: {
+        description: 'The contact section shown directly above the footer on every page.',
+      },
       fields: [
-        link({
-          appearances: false,
-        }),
+        {
+          name: 'enabled',
+          type: 'checkbox',
+          defaultValue: true,
+        },
+        {
+          name: 'heading',
+          type: 'text',
+        },
+        {
+          name: 'form',
+          type: 'relationship',
+          relationTo: 'forms',
+        },
       ],
-      maxRows: 6,
+    },
+    {
+      name: 'email',
+      type: 'email',
+      label: 'Say Hello email',
+    },
+    {
+      name: 'socialLinks',
+      type: 'array',
+      label: 'Get Social links',
       admin: {
         initCollapsed: true,
-        components: {
-          RowLabel: '@/Footer/RowLabel#RowLabel',
+        description: 'The "Get Social" column is hidden while this list is empty.',
+      },
+      fields: [
+        {
+          name: 'platform',
+          type: 'select',
+          options: socialPlatforms,
+          required: true,
         },
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'wordmark',
+      type: 'text',
+      defaultValue: 'SIGNAL',
+      admin: {
+        description: 'Large decorative sign-off at the bottom of the footer.',
       },
     },
   ],

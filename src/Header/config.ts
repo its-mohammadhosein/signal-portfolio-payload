@@ -10,6 +10,15 @@ export const Header: GlobalConfig = {
   },
   fields: [
     {
+      name: 'logoText',
+      type: 'text',
+      defaultValue: 'Signal',
+      required: true,
+      admin: {
+        description: 'Text wordmark shown in the header.',
+      },
+    },
+    {
       name: 'navItems',
       type: 'array',
       fields: [
@@ -25,6 +34,13 @@ export const Header: GlobalConfig = {
         },
       },
     },
+    link({
+      appearances: ['pill', 'pillOutline'],
+      overrides: {
+        name: 'cta',
+        label: 'Call to action button',
+      },
+    }),
   ],
   hooks: {
     afterChange: [revalidateHeader],

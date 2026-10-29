@@ -48,9 +48,8 @@ export const seed = async ({
     globals.map((global) =>
       payload.updateGlobal({
         slug: global,
-        data: {
-          navItems: [],
-        },
+        // header and footer no longer share fields; this seed is replaced by the Signal seed
+        data: (global === 'header' ? { navItems: [] } : { socialLinks: [] }) as never,
         depth: 0,
         context: {
           disableRevalidate: true,
@@ -245,31 +244,8 @@ export const seed = async ({
     payload.updateGlobal({
       slug: 'footer',
       data: {
-        navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Admin',
-              url: '/admin',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/3.x/templates/website',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
-            },
-          },
-        ],
+        email: 'hello@example.com',
+        wordmark: 'SIGNAL',
       },
     }),
   ])
