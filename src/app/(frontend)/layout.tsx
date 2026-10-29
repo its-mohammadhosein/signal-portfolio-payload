@@ -6,6 +6,7 @@ import { Source_Serif_4, Zalando_Sans } from 'next/font/google'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
+import { ContactSection } from '@/components/ContactSection'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
           <Header />
           {children}
+          <ContactSection />
           <Footer />
         </Providers>
       </body>
